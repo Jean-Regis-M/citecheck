@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CiteCheck</title>
+<style>
+:root{--bg:#f7f4ee;--card:#fffdf8;--ink:#1d1b16;--mut:#6b665b;--line:#e2dccd;--acc:#1f4d3a;
+--ok:#1f7a4d;--okbg:#e3f3ea;--part:#8a6100;--partbg:#fbf0d2;--bad:#a4261f;--badbg:#fbe4e1;--na:#4a5568;--nabg:#e8ebf0}
+@media(prefers-color-scheme:dark){:root{--bg:#15140f;--card:#1e1d17;--ink:#f1ede2;--mut:#a39d8d;--line:#35332a;--acc:#7fd1a8;
+--ok:#7fd1a8;--okbg:#17342a;--part:#f0c75e;--partbg:#3a2f10;--bad:#ff8f86;--badbg:#401c19;--na:#b7c0cf;--nabg:#262b33}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:28px 20px 8px;max-width:1180px;margin:auto}
+h1{font:600 34px/1.1 Georgia,"Times New Roman",serif;margin:0;letter-spacing:-.5px}
+h1 span{color:var(--acc)}
+.tag{color:var(--mut);margin:6px 0 0;max-width:62ch}
+main{max-width:1180px;margin:auto;padding:16px 20px 60px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+h2{font:600 13px/1 system-ui;text-transform:uppercase;letter-spacing:.09em;color:var(--mut);margin:0 0 10px}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+textarea,input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:10px}
+textarea{min-height:170px;resize:vertical}
+textarea:focus,input:focus,select:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.src{display:grid;grid-template-columns:70px 1fr auto;gap:8px;margin-bottom:8px;align-items:start}
+.src textarea{min-height:44px;height:44px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+button{font:600 15px system-ui;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:10px 16px;cursor:pointer}
+button.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+@media(prefers-color-scheme:dark){button.primary{color:#0e1a14}}
+button:disabled{opacity:.55;cursor:wait}
+.hint{color:var(--mut);font-size:13px}
+.summary{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.pill{padding:4px 11px;border-radius:99px;font-size:13px;font-weight:600}
+.v-supported{background:var(--okbg);color:var(--ok)}.v-partially_supported{background:var(--partbg);color:var(--part)}
+.v-not_supported,.v-contradicted{background:var(--badbg);color:var(--bad)}.v-cannot_verify,.v-error{background:var(--nabg);color:var(--na)}
+.res{border:1px solid var(--line);border-left-width:5px;border-radius:10px;padding:12px 14px;margin-bottom:12px;background:var(--bg)}
+.res.v-supported{border-left-color:var(--ok)}.res.v-partially_supported{border-left-color:var(--part)}
+.res.v-not_supported,.res.v-contradicted{border-left-color:var(--bad)}.res.v-cannot_verify,.res.v-error{border-left-color:var(--na)}
+.claim{font-family:Georgia,serif;font-size:17px;margin:6px 0}
+.meta{font-size:13px;color:var(--mut)}
+blockquote{margin:8px 0;padding:8px 12px;background:var(--card);border-left:3px solid var(--acc);font-size:14.5px}
+.issue{font-weight:600;color:var(--bad)}
+details{margin-top:6px;font-size:13.5px;color:var(--mut)}
+#status{min-height:1.5em}
+.empty{color:var(--mut);padding:30px 6px;text-align:center}
+.err{background:var(--badbg);color:var(--bad);padding:10px 12px;border-radius:9px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Cite<span>Check</span></h1>
+  <p class="tag">Paste a draft whose claims carry citations like [1]. CiteCheck reads each cited source and shows whether it really says what you wrote, with the exact quote, or tells you it cannot tell.</p>
+</header>
+<main>
+  <section aria-labelledby="in">
+    <h2 id="in">Your draft</h2>
+    <label for="draft">Draft text (cite as [1], [2,3], [label])</label>
+    <textarea id="draft" spellcheck="true"></textarea>
+    <h2 style="margin-top:18px">Sources</h2>
+    <p class="hint">Give a URL, DOI, arXiv id, or paste the text itself. Only open-access full text can be read; paywalled links are reported as unavailable.</p>
+    <div id="sources"></div>
+    <div class="row">
+      <button type="button" id="add">+ Add source</button>
+      <button type="button" id="sample">Load example</button>
+      <button type="button" class="primary" id="run">Check citations</button>
+    </div>
+    <p id="status" class="hint" role="status" aria-live="polite"></p>
+  </section>
+  <section aria-labelledby="out">
+    <h2 id="out">Results</h2>
+    <div id="results"><div class="empty">Results appear here. Each claim gets a verdict, the evidence quote from the source, and what looks overstated.</div></div>
+  </section>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const LABEL={supported:"Supported",partially_supported:"Partly supported",not_supported:"Not supported",contradicted:"Contradicted",cannot_verify:"Can't verify",error:"Source problem"};
+function addSource(label="",value=""){
+  const d=document.createElement("div");d.className="src";
+  d.innerHTML=`<input aria-label="Citation label" placeholder="1"><textarea aria-label="Source URL, DOI, arXiv id or text" placeholder="https://arxiv.org/abs/… or 10.xxxx/… or paste text"></textarea><button type="button" aria-label="Remove source">✕</button>`;
+  d.children[0].value=label;d.children[1].value=value;
+  d.children[2].onclick=()=>d.remove();$("#sources").append(d);
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function render(data){
+  const sum=Object.entries(data.summary).map(([k,n])=>`<span class="pill v-${k}">${n} ${LABEL[k]||k}</span>`).join("");
+  const cards=data.results.map(r=>{
+    const k=r.error?"error":r.verdict;
+    return `<article class="res v-${k}">
+      <div class="meta"><span class="pill v-${k}">${LABEL[k]}</span> &nbsp;cites [${esc(r.label)}]${r.source_title?` · ${esc(r.source_title)}`:""}${r.source_scope==="abstract_only"?" · abstract only":""}</div>
+      <div class="claim">${esc(r.claim)}</div>
+      ${r.error?`<div class="meta">${esc(r.error)}</div>`:""}
+      ${r.issue?`<div class="issue">${esc(r.issue)}</div>`:""}
+      ${r.quote?`<blockquote>“${esc(r.quote)}”</blockquote>`:""}
+      ${r.reasoning?`<div class="meta">${esc(r.reasoning)}</div>`:""}
+      ${r.passages.length?`<details><summary>Passages the model saw (${r.passages.length})</summary>${r.passages.map(p=>`<p><b>#${p.passage_no}</b> ${esc(p.text)}</p>`).join("")}</details>`:""}
+    </article>`}).join("");
+  $("#results").innerHTML=`<div class="summary">${sum}</div>${cards||'<div class="empty">No cited claims found. Add markers like [1] after sentences.</div>'}${data.truncated?'<p class="hint">Only the first claims were checked (limit reached).</p>':""}`;
+}
+$("#add").onclick=()=>addSource();
+$("#sample").onclick=()=>{
+  $("#draft").value="Transformers dispense with recurrence and rely entirely on attention mechanisms [1]. The model reached 28.4 BLEU on the WMT 2014 English-to-German task [1]. Transformers are cheaper to train than every earlier model on every task [1].";
+  $("#sources").innerHTML="";addSource("1","arxiv:1706.03762");
+};
+$("#run").onclick=async()=>{
+  const sources=[...document.querySelectorAll(".src")].map(d=>({label:d.children[0].value.trim(),value:d.children[1].value.trim()})).filter(s=>s.label&&s.value);
+  const draft=$("#draft").value.trim();
+  if(draft.length<10||!sources.length){$("#status").textContent="Add a draft and at least one source with a label.";return}
+  $("#run").disabled=true;$("#status").textContent="Fetching sources and checking each claim… this can take up to a minute.";
+  $("#results").innerHTML="";
+  try{
+    const r=await fetch("/api/check",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({draft,sources})});
+    const j=await r.json();
+    if(!r.ok)throw new Error(typeof j.detail==="string"?j.detail:"Request was rejected. Check the inputs.");
+    render(j);$("#status").textContent="Done.";
+  }catch(e){$("#results").innerHTML=`<div class="err">${esc(e.message)}</div>`;$("#status").textContent="";}
+  finally{$("#run").disabled=false}
+};
+addSource();
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+beautifulsoup4>=4.15.0
+fastapi>=0.163.1
+httpx>=0.28.1
+pydantic>=2.14.3
+pypdf>=7.1.0
+python-multipart>=0.0.34
+uvicorn>=0.54.0
