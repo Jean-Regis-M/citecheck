@@ -112,7 +112,7 @@ python eval/run_scifact.py --data eval/data/scifact --n 60 --out eval/results/ru
 **Requirements:** Python 3.12 and a Gemini API key from [Google AI Studio](https://aistudio.google.com/).
 
 ```bash
-git clone <this-repository-url>
+git clone https://github.com/Jean-Regis-M/citecheck.git
 cd citecheck
 python -m venv .venv
 .venv/Scripts/activate          # macOS/Linux: source .venv/bin/activate
