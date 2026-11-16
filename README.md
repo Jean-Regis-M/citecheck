@@ -31,7 +31,7 @@
 
 ## At a glance
 
-| | |
+| Topic | Summary |
 |---|---|
 | **For** | Students and early-career researchers who cite papers in essays, theses and reports |
 | **Does** | Checks each cited claim against the cited source and shows the evidence |
@@ -114,7 +114,7 @@ flowchart LR
 
 ## How the AI is used
 
-| | |
+| Aspect | Detail |
 |---|---|
 | **Model** | Google Gemini (configurable via `GEMINI_MODEL`), called over the REST API at temperature 0 |
 | **Task** | Natural-language inference: does a passage entail, partly entail, or contradict a claim? |
