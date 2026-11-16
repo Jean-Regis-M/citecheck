@@ -14,7 +14,42 @@
 
 <img src="docs/screenshots/02-results.png" alt="CiteCheck showing two supported claims and one overstated claim, each with a quoted passage from the cited paper" width="900">
 
+<p align="center">
+<a href="#the-problem">Problem</a> ·
+<a href="#the-solution">Solution</a> ·
+<a href="#try-it-in-two-minutes">Quick start</a> ·
+<a href="#how-it-works">How it works</a> ·
+<a href="#evaluation">Evaluation</a> ·
+<a href="#security-and-privacy">Security</a> ·
+<a href="#limitations">Limitations</a> ·
+<a href="#roadmap">Roadmap</a>
+</p>
+
 </div>
+
+---
+
+## At a glance
+
+| | |
+|---|---|
+| **For** | Students and early-career researchers who cite papers in essays, theses and reports |
+| **Does** | Checks each cited claim against the cited source and shows the evidence |
+| **Key idea** | A verdict is only shown if its quote is verified word for word in the source; otherwise it says *can't verify* |
+| **AI** | Google Gemini judges entailment; everything around it is deterministic, auditable code |
+| **Status** | Working prototype, run locally. Evaluated on a public benchmark (preliminary). No hosted demo yet |
+
+## Try it in two minutes
+
+```bash
+git clone https://github.com/Jean-Regis-M/citecheck.git && cd citecheck
+python -m venv .venv && .venv/Scripts/activate      # macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env                                  # add your free Gemini key from aistudio.google.com
+python -m uvicorn app.main:app --port 8000
+```
+
+Then open <http://localhost:8000>, click **Load example**, and click **Check citations**. You should see two *Supported* claims and one *Partly supported* claim, the last flagged for overstating what the paper shows.
 
 ---
 
@@ -165,6 +200,33 @@ python -m pytest -q
 - Retrieval is lexical (BM25), so a claim phrased very differently from the source can miss the relevant passage and come back *can't verify*.
 - It is a writing aid, not an authority. Verdicts can be wrong; the quote and passages are there so you can check.
 - Preliminary evaluation only (see above). Free-tier Gemini quotas limit throughput.
+
+## FAQ
+
+**Why not just paste the paper into a general chatbot?**
+You can, but a chatbot's answer is free text you have to trust. CiteCheck forces a structured verdict, retrieves the relevant passages for you, and refuses to show a "supported" verdict unless its quote is found verbatim in the source. The evidence is on screen to check, not a confident paragraph to believe.
+
+**Does it tell me whether my claim is *true*?**
+No. It only judges whether the *cited source* backs the claim. A true claim can be wrongly cited, and that is exactly what it is for.
+
+**Is it a plagiarism or AI-text detector?**
+No. It does not look at originality or authorship, and it does not grade work.
+
+**What does "can't verify" mean?**
+The source text was too short, too unrelated, unreachable, or the model's quote could not be confirmed. Treat it as "check this one by hand", not as an error.
+
+**Is my draft stored?**
+Not by the app, apart from a local cache of model responses. It is sent to the Gemini API to be judged, so avoid confidential material.
+
+## Roadmap
+
+Planned, **not yet implemented**:
+
+- Full-sample benchmark run and error analysis (blocked only by free-tier API quota).
+- `(Author, Year)` citation style support.
+- Semantic retrieval alongside BM25 for claims phrased very differently from their source.
+- Upload of PDF sources from the browser.
+- A hosted demo with usage limits.
 
 ## Technology stack
 
