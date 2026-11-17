@@ -10,6 +10,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-backend-1f4d3a?style=flat-square)](#technology-stack)
 [![Gemini](https://img.shields.io/badge/LLM-Gemini-1f4d3a?style=flat-square)](#how-the-ai-is-used)
 [![Tests](https://img.shields.io/badge/unit%20tests-11%20passing-1f7a4d?style=flat-square)](#testing)
+[![Live demo](https://img.shields.io/badge/live%20demo-online-1f7a4d?style=flat-square)](https://citecheck-p66j.onrender.com/)
 [![SLAY HACKS 2026](https://img.shields.io/badge/built%20for-SLAY%20HACKS%202026-8a6100?style=flat-square)](https://slayy-hacks.devpost.com/)
 
 <img src="docs/screenshots/02-results.png" alt="CiteCheck showing two supported claims and one overstated claim, each with a quoted passage from the cited paper" width="900">
@@ -37,7 +38,8 @@
 | **Does** | Checks each cited claim against the cited source and shows the evidence |
 | **Key idea** | A verdict is only shown if its quote is verified word for word in the source; otherwise it says *can't verify* |
 | **AI** | Google Gemini judges entailment; everything around it is deterministic, auditable code |
-| **Status** | Working prototype, run locally. Evaluated on a public benchmark (preliminary). No hosted demo yet |
+| **Status** | Working prototype with a [live demo](https://citecheck-p66j.onrender.com/). Evaluated on a public benchmark (partial sample) |
+| **Demo access** | Open the link, click **Load example**, then **Check citations**. No sign-in. The free host sleeps when idle, so the first load can take about a minute |
 
 ## Try it in two minutes
 
@@ -163,7 +165,7 @@ Run the app:
 python -m uvicorn app.main:app --port 8000
 ```
 
-Open <http://localhost:8000>, click **Load example**, then **Check citations**.
+Open <http://localhost:8000> (or the [live demo](https://citecheck-p66j.onrender.com/)), click **Load example**, then **Check citations**.
 
 ### Configuration
 
@@ -224,11 +226,10 @@ Not by the app, apart from a local cache of model responses. It is sent to the G
 
 Planned, **not yet implemented**:
 
-- Full-sample benchmark run and error analysis (blocked only by free-tier API quota).
+- Full-sample benchmark run and error analysis, and a stronger model (blocked only by free-tier API quota).
 - `(Author, Year)` citation style support.
 - Semantic retrieval alongside BM25 for claims phrased very differently from their source.
 - Upload of PDF sources from the browser.
-- A hosted demo with usage limits.
 
 ## Technology stack
 
