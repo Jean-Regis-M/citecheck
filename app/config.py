@@ -16,7 +16,7 @@ except OSError:
 
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
 MAX_SOURCE_BYTES = int(os.environ.get("MAX_SOURCE_BYTES", 15_000_000))
 FETCH_TIMEOUT = float(os.environ.get("FETCH_TIMEOUT", 20))
 MAX_CLAIMS = int(os.environ.get("MAX_CLAIMS", 25))

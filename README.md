@@ -170,7 +170,7 @@ Open <http://localhost:8000>, click **Load example**, then **Check citations**.
 | Variable | Default | Purpose |
 |---|---|---|
 | `GEMINI_API_KEY` | none | **Required.** Your Gemini key. Never commit `.env` |
-| `GEMINI_MODEL` | `gemini-3.5-flash` | Model used for verdicts |
+| `GEMINI_MODEL` | `gemini-3.1-flash-lite` | Model used for verdicts |
 | `RATE_LIMIT_PER_HOUR` | `10` | Checks allowed per visitor IP per hour |
 | `MAX_CLAIMS` | `25` | Cited claims checked per request |
 | `CONTACT_EMAIL` | empty | Optional, identifies you politely to OpenAlex |
