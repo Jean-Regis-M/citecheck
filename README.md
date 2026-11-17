@@ -13,7 +13,7 @@
 [![Live demo](https://img.shields.io/badge/live%20demo-online-1f7a4d?style=flat-square)](https://citecheck-p66j.onrender.com/)
 [![SLAY HACKS 2026](https://img.shields.io/badge/built%20for-SLAY%20HACKS%202026-8a6100?style=flat-square)](https://slayy-hacks.devpost.com/)
 
-<img src="docs/screenshots/02-results.png" alt="CiteCheck showing two supported claims and one overstated claim, each with a quoted passage from the cited paper" width="900">
+<img src="docs/gallery/01-overview.png" alt="CiteCheck checking a four-claim draft against the Transformer paper: two supported, one partly supported, one contradicted, each with a quoted passage" width="900">
 
 <p align="center">
 <a href="#the-problem">Problem</a> ·
@@ -79,7 +79,9 @@ Paste a draft whose claims carry citations such as `[1]`, then give CiteCheck ea
 CiteCheck is a **pre-submission check for the writer**, not a grader. It shows its evidence, and when it is unsure it says so instead of guessing.
 
 <div align="center">
-<img src="docs/screenshots/03-mobile.png" alt="CiteCheck on a phone-sized screen" width="260">
+<img src="docs/gallery/02-supported.png" alt="Supported verdict with the exact quote from the paper" width="31%"> <img src="docs/gallery/03-partly.png" alt="Partly supported verdict flagging an overstated claim" width="31%"> <img src="docs/gallery/04-contradicted.png" alt="Contradicted verdict where the source says the opposite" width="31%">
+<br><sub>Supported, partly supported and contradicted: each verdict shows its evidence.</sub>
+<br><br><img src="docs/gallery/07-mobile.png" alt="CiteCheck on a phone-sized screen" width="560">
 <br><sub>The same results on a 390 px phone screen.</sub>
 </div>
 
