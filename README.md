@@ -128,18 +128,20 @@ A deterministic replacement would not work here: judging whether "28.4 BLEU on W
 
 The verifier is evaluated on **SciFact** (Wadden et al., 2020), a public set of scientific claims labelled *supports*, *contradicts* or *not enough info* against paper abstracts. Each claim is run through the real retrieval, model and audit pipeline.
 
-**Preliminary result** (`gemini-3.1-flash-lite`, 47 of 60 sampled dev claims scored):
+**Preliminary result** (`gemini-3.1-flash-lite`, 74 of 100 sampled dev claims scored, seed 7):
 
 | Measure | Result |
 |---|---|
-| Three-way accuracy | 85.1% (40 / 47) |
-| Precision when it says "supported" | 94.4% (17 / 18) |
-| Unsupported claims wrongly passed as supported | 3.8% (1 / 26) |
+| Three-way accuracy | 75.7% (56 / 74) |
+| Precision when it says "supported" | 80.0% (24 / 30) |
+| Supported claims it recognised | 77.4% (24 / 31) |
+| Unsupported claims wrongly passed as supported | 14.0% (6 / 43) |
+| Model quotes rejected by the audit | 2 |
 
-> **Read this carefully.** 13 of the 60 sampled claims could not be scored because the free Gemini tier's daily request limit was reached mid-run, so the sample is small and a single claim moves these numbers by about two points. SciFact abstracts are short and clean, so this is easier than checking long, messy papers. The main observed error is excess caution (4 supported claims labelled *can't verify*), not false approval. A full-sample run will replace these numbers; reproduce them yourself with the commands below.
+> **Read this carefully.** 26 of the 100 sampled claims could not be scored because the free Gemini tier's daily request limit was reached mid-run, so these numbers carry real uncertainty (roughly plus or minus 10 points). An earlier 47-claim partial run looked better (85%); the larger sample is the one to trust. This is the small, fast "lite" model, chosen only because the free tier allows few calls to larger models; a stronger model has not yet been benchmarked. SciFact abstracts are short and clean, so checking long, messy papers is likely harder. The main errors are excess caution (7 supported claims labelled *can't verify*) and some wrong approvals (6). Reproduce or extend the run with the command below.
 
 ```bash
-python eval/run_scifact.py --data eval/data/scifact --n 60 --out eval/results/run.json
+python eval/run_scifact.py --data eval/data/scifact --n 100 --out eval/results/run.json
 ```
 
 ## Getting started
@@ -199,7 +201,7 @@ python -m pytest -q
 - Judges one claim against one source at a time; it does not follow arguments that span several sentences.
 - Retrieval is lexical (BM25), so a claim phrased very differently from the source can miss the relevant passage and come back *can't verify*.
 - It is a writing aid, not an authority. Verdicts can be wrong; the quote and passages are there so you can check.
-- Preliminary evaluation only (see above). Free-tier Gemini quotas limit throughput.
+- Preliminary evaluation only (see above): about 76% accuracy on a partial sample with the lite model, and about 1 in 7 unsupported claims was wrongly passed. Free-tier Gemini quotas limit throughput.
 
 ## FAQ
 
